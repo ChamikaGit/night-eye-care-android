@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_medium"
+    android:minHeight="48dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/preset_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_color"
+        android:background="@drawable/preset_item_background"
+        android:padding="@dimen/spacing_small"/>
+
+</LinearLayout>

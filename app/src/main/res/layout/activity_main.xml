@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_background"
+    tools:context=".ui.activities.MainActivity">
+
+    <TextView
+        android:id="@+id/app_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/text_color"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_large"/>
+
+    <ImageButton
+        android:id="@+id/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:src="@android:drawable/ic_menu_manage"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/settings_button_description"
+        app:layout_constraintTop_toTopOf="@+id/app_title"
+        app:layout_constraintBottom_toBottomOf="@+id/app_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/spacing_medium"/>
+
+    <Button
+        android:id="@+id/main_toggle_button"
+        style="@style/RoundedButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height"
+        android:text="@string/enable_filter"
+        app:layout_constraintTop_toBottomOf="@+id/app_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_large"/>
+
+    <TextView
+        android:id="@+id/status_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_disabled"
+        android:textColor="@color/secondary_text_color"
+        app:layout_constraintTop_toBottomOf="@+id/main_toggle_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_medium"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/presets_recyclerview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@+id/status_indicator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_large"/>
+
+    <TextView
+        android:id="@+id/intensity_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/intensity"
+        android:textColor="@color/text_color"
+        app:layout_constraintTop_toBottomOf="@+id/presets_recyclerview"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginTop="@dimen/spacing_large"/>
+
+    <SeekBar
+        android:id="@+id/intensity_seekbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="50"
+        app:layout_constraintTop_toBottomOf="@+id/intensity_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="@dimen/spacing_medium"
+        android:layout_marginTop="@dimen/spacing_small"/>
+
+    <TextView
+        android:id="@+id/screen_dim_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/screen_dim"
+        android:textColor="@color/text_color"
+        app:layout_constraintTop_toBottomOf="@+id/intensity_seekbar"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginTop="@dimen/spacing_large"/>
+
+    <SeekBar
+        android:id="@+id/screen_dim_seekbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="0"
+        app:layout_constraintTop_toBottomOf="@+id/screen_dim_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="@dimen/spacing_medium"
+        android:layout_marginTop="@dimen/spacing_small"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/secondary_text_color"
+        app:layout_constraintTop_toBottomOf="@+id/screen_dim_seekbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="@dimen/spacing_medium"
+        android:layout_marginTop="@dimen/spacing_large"/>
+
+    <TextView
+        android:id="@+id/schedule_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/auto_timer"
+        android:textColor="@color/text_color"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginTop="@dimen/spacing_large"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/schedule_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/schedule_label"
+        app:layout_constraintBottom_toBottomOf="@+id/schedule_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/spacing_medium"/>
+
+    <TextView
+        android:id="@+id/start_time_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_time"
+        android:textColor="@color/text_color"
+        app:layout_constraintTop_toBottomOf="@+id/schedule_label"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginTop="@dimen/spacing_medium"/>
+
+    <TextView
+        android:id="@+id/start_time_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10:00 PM"
+        android:textColor="@color/accent_color"
+        android:textSize="16sp"
+        android:minHeight="48dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="@+id/start_time_label"
+        app:layout_constraintBottom_toBottomOf="@+id/start_time_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/spacing_medium"/>
+
+    <TextView
+        android:id="@+id/end_time_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/end_time"
+        android:textColor="@color/text_color"
+        app:layout_constraintTop_toBottomOf="@+id/start_time_label"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginTop="@dimen/spacing_medium"/>
+
+    <TextView
+        android:id="@+id/end_time_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="06:00 AM"
+        android:textColor="@color/accent_color"
+        android:textSize="16sp"
+        android:minHeight="48dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="@+id/end_time_label"
+        app:layout_constraintBottom_toBottomOf="@+id/end_time_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/spacing_medium"/>
+
+
+    <Button
+        android:id="@+id/info_button"
+        style="@style/RoundedButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height"
+        android:text="@string/preset_info"
+        app:layout_constraintTop_toBottomOf="@+id/end_time_value"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_large"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

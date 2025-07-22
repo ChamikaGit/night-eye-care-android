@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_background"
+    tools:context=".ui.activities.SettingsActivity">
+
+    <TextView
+        android:id="@+id/title_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_button_description"
+        android:textColor="@color/text_color"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/spacing_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_large"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_text_view">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_medium">
+
+            <!-- Language Selection -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/spacing_medium"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/language"
+                    android:textColor="@color/text_color"
+                    android:textSize="18sp"/>
+
+                <Spinner
+                    android:id="@+id/language_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/languages"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/secondary_text_color"/>
+
+            <!-- Battery Optimization -->
+            <TextView
+                android:id="@+id/battery_optimization_setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/battery_optimization"
+                android:textColor="@color/text_color"
+                android:textSize="18sp"
+                android:paddingVertical="@dimen/spacing_medium"
+                android:background="?attr/selectableItemBackground"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/secondary_text_color"/>
+
+            <!-- Notifications -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/spacing_medium"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/notifications"
+                    android:textColor="@color/text_color"
+                    android:textSize="18sp"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/notifications_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/secondary_text_color"/>
+
+            <!-- Feedback -->
+            <TextView
+                android:id="@+id/feedback_setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/feedback"
+                android:textColor="@color/text_color"
+                android:textSize="18sp"
+                android:paddingVertical="@dimen/spacing_medium"
+                android:background="?attr/selectableItemBackground"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/secondary_text_color"/>
+
+            <!-- Privacy Policy -->
+            <TextView
+                android:id="@+id/privacy_policy_setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/privacy_policy"
+                android:textColor="@color/text_color"
+                android:textSize="18sp"
+                android:paddingVertical="@dimen/spacing_medium"
+                android:background="?attr/selectableItemBackground"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/secondary_text_color"/>
+
+            <!-- App Version -->
+            <TextView
+                android:id="@+id/app_version_setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/app_version"
+                android:textColor="@color/text_color"
+                android:textSize="18sp"
+                android:paddingVertical="@dimen/spacing_medium"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
