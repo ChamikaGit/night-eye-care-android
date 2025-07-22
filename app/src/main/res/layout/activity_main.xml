@@ -7,32 +7,14 @@
     android:background="@color/primary_background"
     tools:context=".ui.activities.MainActivity">
 
-    <TextView
-        android:id="@+id/app_title"
-        android:layout_width="wrap_content"
+    <include
+        android:id="@+id/custom_toolbar"
+        layout="@layout/layout_custom_toolbar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textColor="@color/text_color"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/spacing_large"/>
-
-    <ImageButton
-        android:id="@+id/settings_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        android:src="@android:drawable/ic_menu_manage"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/settings_button_description"
-        app:layout_constraintTop_toTopOf="@+id/app_title"
-        app:layout_constraintBottom_toBottomOf="@+id/app_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="@dimen/spacing_medium"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/main_toggle_button"
@@ -40,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/button_height"
         android:text="@string/enable_filter"
-        app:layout_constraintTop_toBottomOf="@+id/app_title"
+        app:layout_constraintTop_toBottomOf="@+id/custom_toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/spacing_large"/>

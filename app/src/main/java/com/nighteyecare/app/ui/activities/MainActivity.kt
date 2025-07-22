@@ -16,17 +16,34 @@ import com.nighteyecare.app.ui.viewmodels.MainViewModelFactory
 import com.nighteyecare.app.ui.adapters.PresetAdapter
 import com.nighteyecare.app.ui.fragments.TimePickerFragment
 import com.nighteyecare.app.utils.AlarmScheduler
+import com.nighteyecare.app.ui.utils.CustomToolbar
+import android.widget.ImageView
 import com.nighteyecare.app.R
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
+    private lateinit var customToolbar: CustomToolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        customToolbar = CustomToolbar(binding.customToolbar.root)
+        customToolbar.setTitle(getString(R.string.app_name))
+        customToolbar.showBackButton(false) // Main screen doesn't need a back button
+
+        // Add settings icon to the right of the toolbar
+        val settingsIcon = ImageView(this)
+        settingsIcon.setImageResource(android.R.drawable.ic_menu_manage)
+        settingsIcon.contentDescription = getString(R.string.settings_button_description)
+        settingsIcon.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+        customToolbar.getRightIconsContainer().addView(settingsIcon)
 
         val database = AppDatabase.getDatabase(this)
         val repository = FilterSettingsRepository(database.filterSettingsDao())
@@ -160,11 +177,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.infoButton.setOnClickListener {
             val intent = Intent(this, PresetInfoActivity::class.java)
-            startActivity(intent)
-        }
-
-        binding.settingsButton.setOnClickListener {
-            val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
     }

@@ -44,8 +44,25 @@ class AppPreferencesManager(private val context: Context) {
             selectedLanguage = defaultLanguage,
             onboardingCompleted = false,
             batteryOptimizationShown = false,
-            notificationsEnabled = true
+            notificationsEnabled = true,
+            isFilterActive = false
         )
         saveAppPreferences(currentPreferences.copy(notificationsEnabled = enabled))
+    }
+
+    suspend fun getFilterActive(): Boolean {
+        return getAppPreferences()?.isFilterActive ?: false
+    }
+
+    suspend fun setFilterActive(active: Boolean) {
+        val defaultLanguage = context.getString(R.string.default_language_code)
+        val currentPreferences = getAppPreferences() ?: AppPreferences(
+            selectedLanguage = defaultLanguage,
+            onboardingCompleted = false,
+            batteryOptimizationShown = false,
+            notificationsEnabled = true,
+            isFilterActive = false
+        )
+        saveAppPreferences(currentPreferences.copy(isFilterActive = active))
     }
 }

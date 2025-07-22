@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.nighteyecare.app.data.entities.AppPreferences
 import com.nighteyecare.app.data.entities.FilterSettings
 
-@Database(entities = [FilterSettings::class, AppPreferences::class], version = 1)
+@Database(entities = [FilterSettings::class, AppPreferences::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun filterSettingsDao(): FilterSettingsDao
     abstract fun appPreferencesDao(): AppPreferencesDao
@@ -22,7 +22,8 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "night_eye_care_database"
-                ).build()
+                ).fallbackToDestructiveMigration()
+                .build()
                 INSTANCE = instance
                 instance
             }

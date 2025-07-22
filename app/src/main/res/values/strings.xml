@@ -54,4 +54,5 @@
     <string name="sunset_preset">Sunset (2000K)</string>
     <string name="sunset_preset_desc">Ideal for evening wind-down, reduces sleep disruption</string>
     <string name="what_is_blue_light">What is Blue Light?</string>
+    <string name="back_button_description">Back</string>
 </resources>

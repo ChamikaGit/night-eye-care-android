@@ -36,12 +36,24 @@
         <activity android:name=".ui.activities.PresetInfoActivity" />
         <activity android:name=".ui.activities.TutorialActivity" />
         <activity android:name=".ui.activities.SettingsActivity" />
+        <activity android:name=".ui.activities.LanguageSelectionActivity" />
 
         <service
             android:name=".services.FilterService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="specialUse" />
+
+        <receiver
+            android:name=".receivers.NotificationActionReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ACTION_TOGGLE_FILTER" />
+                <action android:name="ACTION_STOP_SERVICE" />
+                <action android:name="ACTION_OPEN_APP" />
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name=".utils.AlarmReceiver"

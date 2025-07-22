@@ -10,5 +10,6 @@ data class AppPreferences(
     val selectedLanguage: String,
     val onboardingCompleted: Boolean,
     val batteryOptimizationShown: Boolean,
-    val notificationsEnabled: Boolean = true // New field with default true
+    val notificationsEnabled: Boolean = true,
+    val isFilterActive: Boolean = false // New field with default true
 )

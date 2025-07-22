@@ -15,10 +15,14 @@ import com.nighteyecare.app.databinding.ActivitySettingsBinding
 import com.nighteyecare.app.utils.AppPreferencesManager
 import kotlinx.coroutines.launch
 
+import androidx.activity.OnBackPressedCallback
+import com.nighteyecare.app.ui.utils.CustomToolbar
+
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
     private lateinit var appPreferencesManager: AppPreferencesManager
+    private lateinit var customToolbar: CustomToolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,34 +31,26 @@ class SettingsActivity : AppCompatActivity() {
 
         appPreferencesManager = AppPreferencesManager(this)
 
-        setupLanguageSpinner()
+        customToolbar = CustomToolbar(binding.toolbar.root)
+        customToolbar.setTitle(getString(com.nighteyecare.app.R.string.settings_button_description))
+        customToolbar.setBackButtonClickListener { onBackPressedDispatcher.onBackPressed() }
+
         setupClickListeners()
         loadSettings()
-    }
 
-    private fun setupLanguageSpinner() {
-        val languages = resources.getStringArray(com.nighteyecare.app.R.array.languages)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.languageSpinner.adapter = adapter
-
-        binding.languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedLanguage = languages[position]
-                lifecycleScope.launch {
-                    val currentPrefs = appPreferencesManager.getAppPreferences() ?: return@launch
-                    appPreferencesManager.saveAppPreferences(currentPrefs.copy(selectedLanguage = selectedLanguage))
-                    // TODO: Implement actual language change and activity recreation if needed
-                }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Do nothing
-            }
-        }
+        })
     }
 
     private fun setupClickListeners() {
+        binding.languageSetting.setOnClickListener {
+            val intent = Intent(this, LanguageSelectionActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.batteryOptimizationSetting.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
@@ -90,11 +86,6 @@ class SettingsActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val currentPrefs = appPreferencesManager.getAppPreferences()
             currentPrefs?.let {
-                val languages = resources.getStringArray(com.nighteyecare.app.R.array.languages)
-                val selectedLanguageIndex = languages.indexOf(it.selectedLanguage)
-                if (selectedLanguageIndex != -1) {
-                    binding.languageSpinner.setSelection(selectedLanguageIndex)
-                }
                 binding.notificationsSwitch.isChecked = it.notificationsEnabled
             }
             try {
