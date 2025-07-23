@@ -153,25 +153,29 @@ class FilterService : Service() {
 
     private fun createNotification(isActive: Boolean): Notification {
         val notificationLayout = RemoteViews(packageName, R.layout.custom_notification)
+        val notificationExpandedLayout = RemoteViews(packageName, R.layout.custom_notification_expanded)
 
+        // Set content for the normal view
         notificationLayout.setTextViewText(R.id.notification_title, getString(R.string.notification_title))
         notificationLayout.setTextViewText(R.id.notification_text, if (isActive) getString(R.string.notification_active_text) else getString(R.string.notification_paused_text))
-
-        // Set icon for toggle button based on filter state
-        val toggleIcon = if (isActive) R.drawable.ic_pause else R.drawable.ic_play_arrow
-        notificationLayout.setImageViewResource(R.id.notification_action_toggle, toggleIcon)
-
-        // Set pending intents for buttons
+        notificationLayout.setImageViewResource(R.id.notification_action_toggle, if (isActive) R.drawable.ic_pause else R.drawable.ic_play_arrow)
         notificationLayout.setOnClickPendingIntent(R.id.notification_action_toggle, getPendingIntent("ACTION_TOGGLE_FILTER"))
         notificationLayout.setOnClickPendingIntent(R.id.notification_action_stop, getPendingIntent("ACTION_STOP_SERVICE"))
         notificationLayout.setOnClickPendingIntent(R.id.notification_action_open_app, getPendingIntent("ACTION_OPEN_APP"))
 
+        // Set content for the expanded view
+        notificationExpandedLayout.setTextViewText(R.id.notification_title_expanded, getString(R.string.notification_title))
+        notificationExpandedLayout.setTextViewText(R.id.notification_text_expanded, if (isActive) getString(R.string.notification_active_text) else getString(R.string.notification_paused_text))
+        notificationExpandedLayout.setImageViewResource(R.id.notification_action_toggle_expanded, if (isActive) R.drawable.ic_pause else R.drawable.ic_play_arrow)
+        notificationExpandedLayout.setOnClickPendingIntent(R.id.notification_action_toggle_expanded, getPendingIntent("ACTION_TOGGLE_FILTER"))
+        notificationExpandedLayout.setOnClickPendingIntent(R.id.notification_action_stop_expanded, getPendingIntent("ACTION_STOP_SERVICE"))
+        notificationExpandedLayout.setOnClickPendingIntent(R.id.notification_action_open_app_expanded, getPendingIntent("ACTION_OPEN_APP"))
+
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification_icon)
             .setCustomContentView(notificationLayout)
-            .setCustomBigContentView(notificationLayout) // For expanded view
+            .setCustomBigContentView(notificationExpandedLayout) // Use the expanded layout here
             .setOngoing(true)
-            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .build()
     }

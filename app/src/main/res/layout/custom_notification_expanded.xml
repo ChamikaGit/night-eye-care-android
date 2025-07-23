@@ -15,7 +15,7 @@
         android:layout_marginBottom="8dp">
 
         <ImageView
-            android:id="@+id/notification_icon"
+            android:id="@+id/notification_icon_expanded"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_notification_icon"
@@ -28,7 +28,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/notification_title"
+                android:id="@+id/notification_title_expanded"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Night Eye Care"
@@ -37,7 +37,7 @@
                 android:textSize="16sp"/>
 
             <TextView
-                android:id="@+id/notification_text"
+                android:id="@+id/notification_text_expanded"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Blue light filter is active"
@@ -55,7 +55,7 @@
         android:gravity="center_vertical">
 
         <ImageButton
-            android:id="@+id/notification_action_toggle"
+            android:id="@+id/notification_action_toggle_expanded"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
@@ -66,7 +66,7 @@
             android:contentDescription="Toggle Filter"/>
 
         <ImageButton
-            android:id="@+id/notification_action_stop"
+            android:id="@+id/notification_action_stop_expanded"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
@@ -77,7 +77,7 @@
             android:contentDescription="Stop Service"/>
 
         <ImageButton
-            android:id="@+id/notification_action_open_app"
+            android:id="@+id/notification_action_open_app_expanded"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"

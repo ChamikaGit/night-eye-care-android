@@ -130,7 +130,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.mainToggleButton.setOnClickListener {
-            viewModel.setFilterEnabled(!viewModel.filterSettings.value!!.isEnabled)
+            val newFilterState = !viewModel.filterSettings.value!!.isEnabled
+            viewModel.setFilterEnabled(newFilterState)
+            if (newFilterState) {
+                checkAndStartFilterService()
+            } else {
+                stopFilterService()
+            }
         }
 
         binding.intensitySeekbar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
