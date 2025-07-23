@@ -9,9 +9,10 @@ import com.nighteyecare.app.R
 import com.nighteyecare.app.data.entities.FilterSettings
 import com.nighteyecare.app.data.repository.FilterSettingsRepository
 import com.nighteyecare.app.utils.AlarmScheduler
+import com.nighteyecare.app.utils.FilterManager
 import kotlinx.coroutines.launch
 
-class MainViewModel(application: Application, private val repository: FilterSettingsRepository, private val alarmScheduler: AlarmScheduler) : AndroidViewModel(application) {
+class MainViewModel(application: Application, private val repository: FilterSettingsRepository, private val alarmScheduler: AlarmScheduler, private val filterManager: FilterManager) : AndroidViewModel(application) {
 
     private val _filterSettings = MutableLiveData<FilterSettings>()
     val filterSettings: LiveData<FilterSettings> = _filterSettings
@@ -32,22 +33,40 @@ class MainViewModel(application: Application, private val repository: FilterSett
 
     fun setFilterEnabled(isEnabled: Boolean) {
         val newSettings = _filterSettings.value?.copy(isEnabled = isEnabled)
-        newSettings?.let { updateAndSave(it) }
+        newSettings?.let { settings ->
+            updateAndSave(settings)
+            if (settings.isEnabled) {
+                val updatedSettings = settings.copy(selectedPreset = getApplication<Application>().getString(R.string.night_mode_preset_name))
+                updateAndSave(updatedSettings) // Save again with updated preset
+                updateFilterService(updatedSettings)
+            } else {
+                updateFilterService(settings)
+            }
+        }
     }
 
     fun setIntensity(intensity: Int) {
         val newSettings = _filterSettings.value?.copy(intensity = intensity)
-        newSettings?.let { updateAndSave(it) }
+        newSettings?.let { settings ->
+            updateAndSave(settings)
+            updateFilterService(settings)
+        }
     }
 
     fun setDimLevel(dimLevel: Int) {
         val newSettings = _filterSettings.value?.copy(dimLevel = dimLevel)
-        newSettings?.let { updateAndSave(it) }
+        newSettings?.let { settings ->
+            updateAndSave(settings)
+            updateFilterService(settings)
+        }
     }
 
     fun setSelectedPreset(preset: String) {
         val newSettings = _filterSettings.value?.copy(selectedPreset = preset)
-        newSettings?.let { updateAndSave(it) }
+        newSettings?.let { settings ->
+            updateAndSave(settings)
+            updateFilterService(settings)
+        }
     }
 
     fun setScheduleEnabled(isEnabled: Boolean) {
@@ -100,5 +119,50 @@ class MainViewModel(application: Application, private val repository: FilterSett
         viewModelScope.launch {
             repository.insertOrUpdate(newSettings)
         }
+    }
+
+    private fun updateFilterService(settings: FilterSettings) {
+        if (settings.isEnabled) {
+            val combinedAlpha = ((settings.intensity * 2.55) * (1 - (settings.dimLevel / 100.0))).toInt()
+            filterManager.startFilterService(getColorForPreset(settings.selectedPreset), combinedAlpha, settings.isEnabled)
+        } else {
+            filterManager.stopFilterService()
+        }
+    }
+
+    private fun getColorForPreset(preset: String): Int {
+        return when (preset) {
+            getApplication<Application>().getString(R.string.candle_preset_name) -> kelvinToRgb(1800)
+            getApplication<Application>().getString(R.string.sunset_preset_name) -> kelvinToRgb(2000)
+            getApplication<Application>().getString(R.string.lamp_preset_name) -> kelvinToRgb(2700)
+            getApplication<Application>().getString(R.string.night_mode_preset_name) -> kelvinToRgb(3200)
+            getApplication<Application>().getString(R.string.room_light_preset_name) -> kelvinToRgb(3400)
+            getApplication<Application>().getString(R.string.sun_preset_name) -> kelvinToRgb(5000)
+            else -> kelvinToRgb(3200) // Default to Night Mode
+        }
+    }
+
+    private fun kelvinToRgb(kelvin: Int): Int {
+        val temp = kelvin / 100.0
+
+        var r: Double
+        var g: Double
+        var b: Double
+
+        if (temp < 66) {
+            r = 255.0
+            g = 99.4708025861 * Math.log(temp) - 161.1195681661
+            b = if (temp <= 19) {
+                0.0
+            } else {
+                50.5596851305 * Math.log(temp - 10) - 68.1120455596
+            }
+        } else {
+            r = 329.698727446 * Math.pow(temp - 60, -0.1332047592)
+            g = 288.1221695283 * Math.pow(temp - 60, -0.0755148492)
+            b = 255.0
+        }
+
+        return android.graphics.Color.rgb(r.coerceIn(0.0, 255.0).toInt(), g.coerceIn(0.0, 255.0).toInt(), b.coerceIn(0.0, 255.0).toInt())
     }
 }

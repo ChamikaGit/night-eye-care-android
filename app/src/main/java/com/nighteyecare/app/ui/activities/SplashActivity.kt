@@ -3,30 +3,26 @@ package com.nighteyecare.app.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.nighteyecare.app.ui.activities.MainActivity
-import com.nighteyecare.app.ui.activities.TutorialActivity
+import androidx.lifecycle.ViewModelProvider
+import com.nighteyecare.app.ui.viewmodels.SplashViewModel
+import com.nighteyecare.app.ui.viewmodels.SplashViewModelFactory
 import com.nighteyecare.app.utils.AppPreferencesManager
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class SplashActivity : AppCompatActivity() {
+
+    private lateinit var splashViewModel: SplashViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            delay(2000) // 2 second splash screen
+        val factory = SplashViewModelFactory(application, AppPreferencesManager(this))
+        splashViewModel = ViewModelProvider(this, factory).get(SplashViewModel::class.java)
 
-            val appPreferencesManager = AppPreferencesManager(this@SplashActivity)
-            val onboardingCompleted = appPreferencesManager.isOnboardingCompleted()
-
-            if (onboardingCompleted) {
-                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-            } else {
-                startActivity(Intent(this@SplashActivity, TutorialActivity::class.java))
-            }
+        splashViewModel.navigateTo.observe(this) {
+            startActivity(Intent(this, it))
             finish()
         }
+
+        splashViewModel.checkOnboardingStatus()
     }
 }

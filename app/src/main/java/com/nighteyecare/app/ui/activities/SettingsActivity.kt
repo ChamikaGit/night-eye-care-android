@@ -10,10 +10,11 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import com.nighteyecare.app.databinding.ActivitySettingsBinding
+import com.nighteyecare.app.ui.viewmodels.SettingsViewModel
+import com.nighteyecare.app.ui.viewmodels.SettingsViewModelFactory
 import com.nighteyecare.app.utils.AppPreferencesManager
-import kotlinx.coroutines.launch
 
 import androidx.activity.OnBackPressedCallback
 import com.nighteyecare.app.ui.utils.CustomToolbar
@@ -21,7 +22,7 @@ import com.nighteyecare.app.ui.utils.CustomToolbar
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
-    private lateinit var appPreferencesManager: AppPreferencesManager
+    private lateinit var settingsViewModel: SettingsViewModel
     private lateinit var customToolbar: CustomToolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,14 +30,26 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        appPreferencesManager = AppPreferencesManager(this)
+        val factory = SettingsViewModelFactory(application, AppPreferencesManager(this))
+        settingsViewModel = ViewModelProvider(this, factory).get(SettingsViewModel::class.java)
 
         customToolbar = CustomToolbar(binding.toolbar.root)
         customToolbar.setTitle(getString(com.nighteyecare.app.R.string.settings_button_description))
         customToolbar.setBackButtonClickListener { onBackPressedDispatcher.onBackPressed() }
 
         setupClickListeners()
-        loadSettings()
+        settingsViewModel.appPreferences.observe(this) { prefs ->
+            prefs?.let {
+                binding.notificationsSwitch.isChecked = it.notificationsEnabled
+            }
+            try {
+                val pInfo = packageManager.getPackageInfo(packageName, 0)
+                binding.appVersionSetting.text = "App Version: ${pInfo.versionName}"
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+                binding.appVersionSetting.text = "App Version: N/A"
+            }
+        }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -60,9 +73,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.notificationsSwitch.setOnCheckedChangeListener { _, isChecked ->
-            lifecycleScope.launch {
-                appPreferencesManager.setNotificationsEnabled(isChecked)
-            }
+            settingsViewModel.setNotificationsEnabled(isChecked)
         }
 
         binding.feedbackSetting.setOnClickListener {
@@ -82,19 +93,5 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadSettings() {
-        lifecycleScope.launch {
-            val currentPrefs = appPreferencesManager.getAppPreferences()
-            currentPrefs?.let {
-                binding.notificationsSwitch.isChecked = it.notificationsEnabled
-            }
-            try {
-                val pInfo = packageManager.getPackageInfo(packageName, 0)
-                binding.appVersionSetting.text = "App Version: ${pInfo.versionName}"
-            } catch (e: PackageManager.NameNotFoundException) {
-                e.printStackTrace()
-                binding.appVersionSetting.text = "App Version: N/A"
-            }
-        }
-    }
+    
 }

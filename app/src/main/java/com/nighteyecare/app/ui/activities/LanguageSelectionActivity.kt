@@ -2,20 +2,21 @@ package com.nighteyecare.app.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nighteyecare.app.databinding.ActivityLanguageSelectionBinding
 import com.nighteyecare.app.ui.adapters.LanguageAdapter
 import androidx.activity.OnBackPressedCallback
 import com.nighteyecare.app.ui.utils.CustomToolbar
 import com.nighteyecare.app.utils.AppPreferencesManager
-import kotlinx.coroutines.launch
+import com.nighteyecare.app.ui.viewmodels.LanguageSelectionViewModel
+import com.nighteyecare.app.ui.viewmodels.LanguageSelectionViewModelFactory
 
 class LanguageSelectionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLanguageSelectionBinding
     private lateinit var customToolbar: CustomToolbar
-    private lateinit var appPreferencesManager: AppPreferencesManager
+    private lateinit var languageSelectionViewModel: LanguageSelectionViewModel
     private lateinit var languageAdapter: LanguageAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,14 +24,17 @@ class LanguageSelectionActivity : AppCompatActivity() {
         binding = ActivityLanguageSelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        appPreferencesManager = AppPreferencesManager(this)
+        val factory = LanguageSelectionViewModelFactory(application, AppPreferencesManager(this))
+        languageSelectionViewModel = ViewModelProvider(this, factory).get(LanguageSelectionViewModel::class.java)
 
         customToolbar = CustomToolbar(binding.toolbar.root)
         customToolbar.setTitle(getString(com.nighteyecare.app.R.string.language))
         customToolbar.setBackButtonClickListener { onBackPressedDispatcher.onBackPressed() }
 
         setupLanguageRecyclerView()
-        loadSelectedLanguage()
+        languageSelectionViewModel.selectedLanguageCode.observe(this) {
+            languageAdapter.setSelectedLanguage(it)
+        }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -51,12 +55,7 @@ class LanguageSelectionActivity : AppCompatActivity() {
 
         languageAdapter = LanguageAdapter(languages) {
             selectedLanguageCode ->
-            lifecycleScope.launch {
-                val currentPrefs = appPreferencesManager.getAppPreferences() ?: return@launch
-                appPreferencesManager.saveAppPreferences(currentPrefs.copy(selectedLanguage = selectedLanguageCode))
-                languageAdapter.setSelectedLanguage(selectedLanguageCode)
-                // TODO: Implement actual language change and activity recreation
-            }
+            languageSelectionViewModel.setSelectedLanguage(selectedLanguageCode)
         }
 
         binding.languageRecyclerView.apply {
@@ -65,12 +64,5 @@ class LanguageSelectionActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadSelectedLanguage() {
-        lifecycleScope.launch {
-            val currentPrefs = appPreferencesManager.getAppPreferences()
-            currentPrefs?.selectedLanguage?.let {
-                languageAdapter.setSelectedLanguage(it)
-            }
-        }
-    }
+    
 }

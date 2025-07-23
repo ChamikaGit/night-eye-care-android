@@ -73,6 +73,16 @@
         android:layout_marginTop="@dimen/spacing_small"/>
 
     <TextView
+        android:id="@+id/intensity_percentage_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="50%"
+        android:textColor="@color/secondary_text_color"
+        app:layout_constraintTop_toTopOf="@+id/intensity_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/spacing_medium"/>
+
+    <TextView
         android:id="@+id/screen_dim_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -94,6 +104,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginHorizontal="@dimen/spacing_medium"
         android:layout_marginTop="@dimen/spacing_small"/>
+
+    <TextView
+        android:id="@+id/screen_dim_percentage_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0%"
+        android:textColor="@color/secondary_text_color"
+        app:layout_constraintTop_toTopOf="@+id/screen_dim_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/spacing_medium"/>
 
     <View
         android:id="@+id/divider"

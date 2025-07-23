@@ -31,7 +31,7 @@ class FilterService : Service() {
     private lateinit var overlayView: LinearLayout
     private var currentFilterColor: Int = 0
     private var currentFilterAlpha: Int = 0
-    private lateinit var appPreferencesManager: AppPreferencesManager
+    
 
     companion object {
         private const val NOTIFICATION_CHANNEL_ID = "NightEyeCareChannel"
@@ -44,7 +44,7 @@ class FilterService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        appPreferencesManager = AppPreferencesManager(this)
+        
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         overlayView = LinearLayout(this)
         overlayView.layoutParams = LinearLayout.LayoutParams(
@@ -68,26 +68,24 @@ class FilterService : Service() {
             return
         }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            if (appPreferencesManager.getNotificationsEnabled()) {
-                createNotificationChannel()
-                startForeground(NOTIFICATION_ID, createNotification(appPreferencesManager.getFilterActive()))
-            }
-        }
+        createNotificationChannel()
+        startForeground(NOTIFICATION_ID, createNotification(false))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val action = intent?.action
+        val colorValue: Int = intent?.getIntExtra("color", 0) ?: 0
+        val alphaValue: Int = intent?.getIntExtra("alpha", 0) ?: 0
+        val isActive: Boolean = intent?.getBooleanExtra("isActive", false) ?: false
+
+        currentFilterColor = colorValue
+        currentFilterAlpha = alphaValue
 
         when (action) {
             "ACTION_TOGGLE_FILTER" -> {
-                val isActive = runBlocking { appPreferencesManager.getFilterActive() }
-                runBlocking { appPreferencesManager.setFilterActive(!isActive) }
-                runBlocking { applyFilter() }
-                runBlocking { updateNotification() }
+                // This action is now handled by the ViewModel, which will restart the service with the correct state
             }
             "ACTION_STOP_SERVICE" -> {
-                runBlocking { appPreferencesManager.setFilterActive(false) }
                 stopSelf()
             }
             "ACTION_OPEN_APP" -> {
@@ -98,15 +96,10 @@ class FilterService : Service() {
             }
             else -> {
                 // Initial start or start with color/alpha
-                val colorValue: Int = intent?.getIntExtra("color", 0) ?: 0
-                val alphaValue: Int = intent?.getIntExtra("alpha", 0) ?: 0
-                currentFilterColor = colorValue
-                currentFilterAlpha = alphaValue
-                runBlocking { appPreferencesManager.setFilterActive(true) } // Assume filter is active when started with color/alpha
-                runBlocking { applyFilter() }
-                runBlocking { updateNotification() }
             }
         }
+        applyFilter(isActive)
+        updateNotification(isActive)
         return START_STICKY
     }
 
@@ -115,27 +108,21 @@ class FilterService : Service() {
         windowManager.removeView(overlayView)
     }
 
-    private fun applyFilter() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val isActive = appPreferencesManager.getFilterActive()
-            if (isActive) {
-                overlayView.setBackgroundColor(currentFilterColor)
-                overlayView.background.alpha = currentFilterAlpha
-            } else {
-                overlayView.background.alpha = 0 // Make it transparent when paused
-            }
+    private fun applyFilter(isActive: Boolean) {
+        if (isActive) {
+            overlayView.setBackgroundColor(currentFilterColor)
+            overlayView.background.alpha = currentFilterAlpha
+        } else {
+            overlayView.background.alpha = 0 // Make it transparent when paused
         }
     }
 
-    private fun updateNotification() {
-        CoroutineScope(Dispatchers.Main).launch {
-            if (appPreferencesManager.getNotificationsEnabled()) {
-                val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.notify(NOTIFICATION_ID, createNotification(appPreferencesManager.getFilterActive()))
-            } else {
-                val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.cancel(NOTIFICATION_ID)
-            }
+    private fun updateNotification(isActive: Boolean) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (isActive) {
+            notificationManager.notify(NOTIFICATION_ID, createNotification(isActive))
+        } else {
+            notificationManager.cancel(NOTIFICATION_ID)
         }
     }
 

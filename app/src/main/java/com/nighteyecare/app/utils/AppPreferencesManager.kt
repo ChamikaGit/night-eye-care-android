@@ -23,14 +23,18 @@ class AppPreferencesManager(private val context: Context) {
         return getAppPreferences()?.onboardingCompleted ?: false
     }
 
-    suspend fun setOnboardingCompleted(completed: Boolean) {
-        val defaultLanguage = context.getString(R.string.default_language_code)
-        val currentPreferences = getAppPreferences() ?: AppPreferences(
-            selectedLanguage = defaultLanguage,
+    private suspend fun getOrCreateAppPreferences(): AppPreferences {
+        return getAppPreferences() ?: AppPreferences(
+            selectedLanguage = context.getString(R.string.default_language_code),
             onboardingCompleted = false,
             batteryOptimizationShown = false,
-            notificationsEnabled = true
+            notificationsEnabled = true,
+            isFilterActive = false
         )
+    }
+
+    suspend fun setOnboardingCompleted(completed: Boolean) {
+        val currentPreferences = getOrCreateAppPreferences()
         saveAppPreferences(currentPreferences.copy(onboardingCompleted = completed))
     }
 
@@ -39,14 +43,7 @@ class AppPreferencesManager(private val context: Context) {
     }
 
     suspend fun setNotificationsEnabled(enabled: Boolean) {
-        val defaultLanguage = context.getString(R.string.default_language_code)
-        val currentPreferences = getAppPreferences() ?: AppPreferences(
-            selectedLanguage = defaultLanguage,
-            onboardingCompleted = false,
-            batteryOptimizationShown = false,
-            notificationsEnabled = true,
-            isFilterActive = false
-        )
+        val currentPreferences = getOrCreateAppPreferences()
         saveAppPreferences(currentPreferences.copy(notificationsEnabled = enabled))
     }
 
@@ -55,14 +52,7 @@ class AppPreferencesManager(private val context: Context) {
     }
 
     suspend fun setFilterActive(active: Boolean) {
-        val defaultLanguage = context.getString(R.string.default_language_code)
-        val currentPreferences = getAppPreferences() ?: AppPreferences(
-            selectedLanguage = defaultLanguage,
-            onboardingCompleted = false,
-            batteryOptimizationShown = false,
-            notificationsEnabled = true,
-            isFilterActive = false
-        )
+        val currentPreferences = getOrCreateAppPreferences()
         saveAppPreferences(currentPreferences.copy(isFilterActive = active))
     }
 }
