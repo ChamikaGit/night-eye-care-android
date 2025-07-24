@@ -12,7 +12,7 @@
     <color name="text_color">#FFFFFF</color>
     <color name="card_background">#1E2D24</color>
     <color name="secondary_text_color">#A0A0A0</color>
-    <color name="black_dim">#B1000000</color>
+    <color name="black_dim">#C2000000</color>
 
     <color name="night_mode">#9923395d</color>
     <color name="candle">#99ffc85b</color>
@@ -21,4 +21,9 @@
     <color name="room_light">#99f5f5dc</color>
     <color name="sun">#99fff8e1</color>
     <color name="twilight">#999b5de5</color>
+    <color name="warm_white">#99FFF4E6</color>
+    <color name="cool_white">#99E6F4FF</color>
+    <color name="daylight">#99FFFFFF</color>
+    <color name="deep_red">#99FF0000</color>
+    <color name="soft_blue">#99ADD8E6</color>
     </resources>

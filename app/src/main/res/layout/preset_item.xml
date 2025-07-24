@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="@dimen/preset_item_width"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="@dimen/spacing_medium"
-    android:minHeight="48dp"
-    android:gravity="center_vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_small"
+    android:gravity="center_horizontal">
 
     <View
         android:id="@+id/preset_color"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="@dimen/spacing_medium"/>
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/preset_item_background"/>
 
     <TextView
         android:id="@+id/preset_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop ="8dp"
         android:textColor="@color/text_color"
-        android:background="@drawable/preset_item_background"
-        android:padding="@dimen/spacing_small"/>
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="14sp"
+        android:gravity="center_horizontal"
+        android:singleLine="true"
+        android:ellipsize="end"/>
 
 </LinearLayout>

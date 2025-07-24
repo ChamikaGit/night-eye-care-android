@@ -45,7 +45,12 @@ class FilterService : Service() {
         BlueLightPreset("Lamp", R.color.lamp),
         BlueLightPreset("Room Light", R.color.room_light),
         BlueLightPreset("Sun", R.color.sun),
-        BlueLightPreset("Twilight", R.color.twilight)
+        BlueLightPreset("Twilight", R.color.twilight),
+        BlueLightPreset("Warm White", R.color.warm_white),
+        BlueLightPreset("Cool White", R.color.cool_white),
+        BlueLightPreset("Daylight", R.color.daylight),
+        BlueLightPreset("Deep Red", R.color.deep_red),
+        BlueLightPreset("Soft Blue", R.color.soft_blue)
     )
     
 

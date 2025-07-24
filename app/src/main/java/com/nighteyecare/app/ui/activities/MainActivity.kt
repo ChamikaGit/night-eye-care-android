@@ -120,7 +120,12 @@ class MainActivity : AppCompatActivity() {
             BlueLightPreset(getString(R.string.lamp_preset_name), R.color.lamp),
             BlueLightPreset(getString(R.string.room_light_preset_name), R.color.room_light),
             BlueLightPreset(getString(R.string.sun_preset_name), R.color.sun),
-            BlueLightPreset(getString(R.string.twilight_preset_name), R.color.twilight)
+            BlueLightPreset(getString(R.string.twilight_preset_name), R.color.twilight),
+            BlueLightPreset(getString(R.string.warm_white_preset_name), R.color.warm_white),
+            BlueLightPreset(getString(R.string.cool_white_preset_name), R.color.cool_white),
+            BlueLightPreset(getString(R.string.daylight_preset_name), R.color.daylight),
+            BlueLightPreset(getString(R.string.deep_red_preset_name), R.color.deep_red),
+            BlueLightPreset(getString(R.string.soft_blue_preset_name), R.color.soft_blue)
         )
         val adapter = PresetAdapter(presets) { preset ->
             viewModel.setSelectedPreset(preset.name)

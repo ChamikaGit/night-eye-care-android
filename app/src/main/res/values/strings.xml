@@ -12,6 +12,11 @@
     <string name="room_light_preset_name">Room Light</string>
     <string name="sun_preset_name">Sun</string>
     <string name="twilight_preset_name">Twilight</string>
+    <string name="warm_white_preset_name">Warm White</string>
+    <string name="cool_white_preset_name">Cool White</string>
+    <string name="daylight_preset_name">Daylight</string>
+    <string name="deep_red_preset_name">Deep Red</string>
+    <string name="soft_blue_preset_name">Soft Blue</string>
     <string name="default_preset_name">Night Mode</string>
     <string name="default_language_code">en</string>
     <string name="notification_title">Night Eye Care</string>
