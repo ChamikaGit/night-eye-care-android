@@ -99,8 +99,8 @@ class FilterService : Service() {
             "ACTION_TOGGLE_FILTER" -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     val currentSettings = AppDatabase.getDatabase(this@FilterService.applicationContext).filterSettingsDao().getFilterSettings() ?: return@launch
-                    val newIsActive = !currentSettings.isEnabled
-                    this@FilterService.appPreferencesManager.setFilterActive(newIsActive)
+                    val newIsActive = !appPreferencesManager.getFilterActive()
+                    appPreferencesManager.setFilterActive(newIsActive)
                     applyFilter(newIsActive, currentSettings.dimLevel)
                     updateNotification(newIsActive)
                 }
@@ -127,6 +127,8 @@ class FilterService : Service() {
         super.onDestroy()
         windowManager.removeView(overlayView)
         windowManager.removeView(dimOverlayView)
+        // Service is stopped, so remove notification
+        stopForeground(true)
     }
 
     private fun applyFilter(isActive: Boolean, dimLevel: Int) {
@@ -136,22 +138,16 @@ class FilterService : Service() {
                 overlayView.background.alpha = currentFilterAlpha
                 dimOverlayView.setBackgroundColor(ContextCompat.getColor(this@FilterService, R.color.black_dim))
                 dimOverlayView.background.alpha = (dimLevel * 2.55).toInt() // 0-100 to 0-255
-                startForeground(NOTIFICATION_ID, createNotification(true))
             } else {
                 overlayView.background.alpha = 0 // Make it transparent when paused
                 dimOverlayView.background.alpha = 0 // Make it transparent when paused
-                stopForeground(true)
             }
         }
     }
 
     private fun updateNotification(isActive: Boolean) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (isActive) {
-            notificationManager.notify(NOTIFICATION_ID, createNotification(isActive))
-        } else {
-            notificationManager.cancel(NOTIFICATION_ID)
-        }
+        notificationManager.notify(NOTIFICATION_ID, createNotification(isActive))
     }
 
     private fun createNotificationChannel() {
