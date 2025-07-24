@@ -44,6 +44,7 @@
     <string name="notifications">Notifications</string>
     <string name="preset_info">Preset Info</string>
     <string name="preset_information">Preset Information</string>
+    <string name="presets_label">Presets</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="room_light_preset">Room Light (3400K)</string>
     <string name="room_light_preset_desc">Suitable for bright indoor environments</string>
@@ -56,4 +57,8 @@
     <string name="sunset_preset_desc">Ideal for evening wind-down, reduces sleep disruption</string>
     <string name="what_is_blue_light">What is Blue Light?</string>
     <string name="back_button_description">Back</string>
+    <string name="battery_optimization_title">Optimize Battery Usage</string>
+    <string name="battery_optimization_message">To ensure the blue light filter runs continuously without interruption, please disable battery optimization for this app. Android system may otherwise stop the service to save battery, disabling the filter.</string>
+    <string name="battery_optimization_positive_button">Disable Optimization</string>
+    <string name="battery_optimization_negative_button">No, Thanks</string>
 </resources>

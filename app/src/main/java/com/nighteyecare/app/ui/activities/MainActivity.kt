@@ -18,9 +18,18 @@ import com.nighteyecare.app.ui.adapters.PresetAdapter
 import com.nighteyecare.app.ui.fragments.TimePickerFragment
 import com.nighteyecare.app.utils.AlarmScheduler
 import com.nighteyecare.app.ui.utils.CustomToolbar
+import com.nighteyecare.app.ui.utils.CustomAlertDialog
 import android.widget.ImageView
+import android.content.Context
+import android.os.PowerManager
+import android.view.View
 import com.nighteyecare.app.R
 import com.nighteyecare.app.data.model.BlueLightPreset
+import com.nighteyecare.app.utils.AppPreferencesManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -60,6 +69,47 @@ class MainActivity : AppCompatActivity() {
         setupObservers()
         setupClickListeners()
         setupPresetsRecyclerView()
+        setupBatteryOptimizationCard()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkBatteryOptimizationStatus()
+    }
+
+    private fun setupBatteryOptimizationCard() {
+        binding.batteryOptimizationCardButton.setOnClickListener {
+            val dialog = CustomAlertDialog(this)
+            dialog.showConfirmationDialog(
+                title = getString(R.string.battery_optimization_title),
+                message = getString(R.string.battery_optimization_message),
+                positiveButtonText = getString(R.string.battery_optimization_positive_button),
+                negativeButtonText = getString(R.string.battery_optimization_negative_button),
+                onPositiveClick = {
+                    val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                    intent.setData(Uri.parse("package:" + packageName))
+                    startActivity(intent)
+                },
+                onNegativeClick = {
+                    // User chose not to disable optimization, hide the card for now
+                    binding.batteryOptimizationCard.visibility = View.GONE
+                }
+            )
+        }
+    }
+
+    private fun checkBatteryOptimizationStatus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val packageName = packageName
+            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+            if (pm.isIgnoringBatteryOptimizations(packageName)) {
+                binding.batteryOptimizationCard.visibility = View.GONE
+            } else {
+                binding.batteryOptimizationCard.visibility = View.VISIBLE
+            }
+        } else {
+            binding.batteryOptimizationCard.visibility = View.GONE
+        }
     }
 
     private fun setupPresetsRecyclerView() {
