@@ -33,4 +33,12 @@ class FilterManager(private val context: Context) {
         val intent = Intent(context, FilterService::class.java)
         context.stopService(intent)
     }
+
+    fun updateNotificationState(isActive: Boolean) {
+        val intent = Intent(context, FilterService::class.java).apply {
+            action = "ACTION_UPDATE_NOTIFICATION_STATE"
+            putExtra("isActive", isActive)
+        }
+        context.startService(intent)
+    }
 }

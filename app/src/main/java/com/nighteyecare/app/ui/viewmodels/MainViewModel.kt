@@ -41,6 +41,7 @@ class MainViewModel(application: Application, private val repository: FilterSett
         val newSettings = _filterSettings.value?.copy(isEnabled = isEnabled)
         newSettings?.let { settings ->
             updateAndSave(settings)
+            filterManager.updateNotificationState(settings.isEnabled)
             if (settings.isEnabled) {
                 val updatedSettings = settings.copy(selectedPreset = getApplication<Application>().getString(R.string.night_mode_preset_name))
                 updateAndSave(updatedSettings) // Save again with updated preset

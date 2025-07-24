@@ -8,6 +8,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
@@ -26,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import com.nighteyecare.app.data.database.AppDatabase
+import com.nighteyecare.app.data.model.BlueLightPreset
 
 class FilterService : Service() {
 
@@ -35,6 +37,16 @@ class FilterService : Service() {
     private lateinit var appPreferencesManager: AppPreferencesManager
     private var currentFilterColor: Int = 0
     private var currentFilterAlpha: Int = 0
+
+    private val presets = listOf(
+        BlueLightPreset("Night Mode", R.color.night_mode),
+        BlueLightPreset("Candle", R.color.candle),
+        BlueLightPreset("Sunset", R.color.sunset),
+        BlueLightPreset("Lamp", R.color.lamp),
+        BlueLightPreset("Room Light", R.color.room_light),
+        BlueLightPreset("Sun", R.color.sun),
+        BlueLightPreset("Twilight", R.color.twilight)
+    )
     
 
     companion object {
@@ -101,20 +113,32 @@ class FilterService : Service() {
                     val currentSettings = AppDatabase.getDatabase(this@FilterService.applicationContext).filterSettingsDao().getFilterSettings() ?: return@launch
                     val newIsActive = !appPreferencesManager.getFilterActive()
                     appPreferencesManager.setFilterActive(newIsActive)
-                    applyFilter(newIsActive, currentSettings.dimLevel)
+                    val updatedSettings = currentSettings.copy(isEnabled = newIsActive)
+                    AppDatabase.getDatabase(applicationContext).filterSettingsDao().insertOrUpdate(updatedSettings)
+                    applyFilter(newIsActive, updatedSettings.dimLevel)
                     updateNotification(newIsActive)
                 }
             }
             "ACTION_STOP_SERVICE" -> {
                 stopSelf()
             }
+            "ACTION_UPDATE_NOTIFICATION_STATE" -> {
+                intent?.let {
+                    val isActive = it.getBooleanExtra("isActive", false)
+                    updateNotification(isActive)
+                }
+            }
             else -> {
                 // Handle initial start or start with color/alpha/dimLevel
-                intent?.let {
-                    currentFilterColor = it.getIntExtra("color", 0)
-                    currentFilterAlpha = it.getIntExtra("alpha", 0)
-                    val dimLevel = it.getIntExtra("dimLevel", 0)
-                    val isActive = it.getBooleanExtra("isActive", false)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val savedSettings = AppDatabase.getDatabase(applicationContext).filterSettingsDao().getFilterSettings()
+                    val savedIsActive = savedSettings?.isEnabled ?: false
+
+                    currentFilterColor = intent?.getIntExtra("color", presets.find { preset: BlueLightPreset -> preset.name == savedSettings?.selectedPreset }?.colorRes ?: 0) ?: 0
+                    currentFilterAlpha = intent?.getIntExtra("alpha", savedSettings?.intensity ?: 0) ?: 0
+                    val dimLevel = intent?.getIntExtra("dimLevel", savedSettings?.dimLevel ?: 0) ?: 0
+                    val isActive = intent?.getBooleanExtra("isActive", savedIsActive) ?: savedIsActive
+
                     applyFilter(isActive, dimLevel)
                     updateNotification(isActive)
                 }
@@ -139,7 +163,9 @@ class FilterService : Service() {
                 dimOverlayView.setBackgroundColor(ContextCompat.getColor(this@FilterService, R.color.black_dim))
                 dimOverlayView.background.alpha = (dimLevel * 2.55).toInt() // 0-100 to 0-255
             } else {
+                if (overlayView.background == null) overlayView.setBackgroundDrawable(ColorDrawable(0))
                 overlayView.background.alpha = 0 // Make it transparent when paused
+                if (dimOverlayView.background == null) dimOverlayView.setBackgroundDrawable(ColorDrawable(0))
                 dimOverlayView.background.alpha = 0 // Make it transparent when paused
             }
         }
