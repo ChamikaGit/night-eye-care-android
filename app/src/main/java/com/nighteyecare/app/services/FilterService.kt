@@ -130,16 +130,18 @@ class FilterService : Service() {
     }
 
     private fun applyFilter(isActive: Boolean, dimLevel: Int) {
-        if (isActive) {
-            overlayView.setBackgroundColor(currentFilterColor)
-            overlayView.background.alpha = currentFilterAlpha
-            dimOverlayView.setBackgroundColor(ContextCompat.getColor(this, R.color.black_dim))
-            dimOverlayView.background.alpha = (dimLevel * 2.55).toInt() // 0-100 to 0-255
-            startForeground(NOTIFICATION_ID, createNotification(true))
-        } else {
-            overlayView.background.alpha = 0 // Make it transparent when paused
-            dimOverlayView.background.alpha = 0 // Make it transparent when paused
-            stopForeground(true)
+        CoroutineScope(Dispatchers.Main).launch {
+            if (isActive) {
+                overlayView.setBackgroundColor(currentFilterColor)
+                overlayView.background.alpha = currentFilterAlpha
+                dimOverlayView.setBackgroundColor(ContextCompat.getColor(this@FilterService, R.color.black_dim))
+                dimOverlayView.background.alpha = (dimLevel * 2.55).toInt() // 0-100 to 0-255
+                startForeground(NOTIFICATION_ID, createNotification(true))
+            } else {
+                overlayView.background.alpha = 0 // Make it transparent when paused
+                dimOverlayView.background.alpha = 0 // Make it transparent when paused
+                stopForeground(true)
+            }
         }
     }
 
@@ -171,6 +173,9 @@ class FilterService : Service() {
         notificationLayout.setTextViewText(R.id.notification_title, getString(R.string.notification_title))
         notificationLayout.setTextViewText(R.id.notification_text, if (isActive) getString(R.string.notification_active_text) else getString(R.string.notification_paused_text))
         notificationLayout.setImageViewResource(R.id.notification_action_toggle, if (isActive) R.drawable.ic_pause else R.drawable.ic_play_arrow)
+        notificationLayout.setInt(R.id.notification_action_toggle, "setColorFilter", ContextCompat.getColor(this, R.color.accent_color))
+        notificationLayout.setInt(R.id.notification_action_stop, "setColorFilter", ContextCompat.getColor(this, R.color.accent_color))
+        notificationLayout.setInt(R.id.notification_action_open_app, "setColorFilter", ContextCompat.getColor(this, R.color.accent_color))
         notificationLayout.setOnClickPendingIntent(R.id.notification_action_toggle, getPendingIntent("ACTION_TOGGLE_FILTER"))
         notificationLayout.setOnClickPendingIntent(R.id.notification_action_stop, getPendingIntent("ACTION_STOP_SERVICE"))
         notificationLayout.setOnClickPendingIntent(R.id.notification_action_open_app, getPendingIntent("ACTION_OPEN_APP"))
