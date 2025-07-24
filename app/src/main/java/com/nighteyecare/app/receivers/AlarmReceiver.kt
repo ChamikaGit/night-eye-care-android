@@ -1,4 +1,4 @@
-package com.nighteyecare.app.utils
+package com.nighteyecare.app.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context

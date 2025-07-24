@@ -1,13 +1,16 @@
 package com.nighteyecare.app.ui.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.nighteyecare.app.data.model.BlueLightPreset
 import com.nighteyecare.app.databinding.PresetItemBinding
 
 class PresetAdapter(
-    private val presets: List<String>,
-    private val onPresetSelected: (String) -> Unit
+    private val presets: List<BlueLightPreset>,
+    private val onPresetSelected: (BlueLightPreset) -> Unit
 ) : RecyclerView.Adapter<PresetAdapter.PresetViewHolder>() {
 
     private var selectedPosition = 0
@@ -29,8 +32,9 @@ class PresetAdapter(
     override fun getItemCount() = presets.size
 
     inner class PresetViewHolder(private val binding: PresetItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(presetName: String, isSelected: Boolean) {
-            binding.presetName.text = presetName
+        fun bind(preset: BlueLightPreset, isSelected: Boolean) {
+            binding.presetName.text = preset.name
+            binding.presetColor.setBackgroundColor(ContextCompat.getColor(itemView.context, preset.colorRes))
             itemView.isSelected = isSelected
         }
     }

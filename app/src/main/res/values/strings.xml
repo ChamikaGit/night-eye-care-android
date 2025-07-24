@@ -11,6 +11,7 @@
     <string name="night_mode_preset_name">Night Mode</string>
     <string name="room_light_preset_name">Room Light</string>
     <string name="sun_preset_name">Sun</string>
+    <string name="twilight_preset_name">Twilight</string>
     <string name="default_preset_name">Night Mode</string>
     <string name="default_language_code">en</string>
     <string name="notification_title">Night Eye Care</string>

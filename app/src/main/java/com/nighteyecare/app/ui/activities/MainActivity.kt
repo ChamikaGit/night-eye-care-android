@@ -20,6 +20,7 @@ import com.nighteyecare.app.utils.AlarmScheduler
 import com.nighteyecare.app.ui.utils.CustomToolbar
 import android.widget.ImageView
 import com.nighteyecare.app.R
+import com.nighteyecare.app.data.model.BlueLightPreset
 
 class MainActivity : AppCompatActivity() {
 
@@ -63,15 +64,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupPresetsRecyclerView() {
         val presets = listOf(
-            getString(R.string.candle_preset_name),
-            getString(R.string.sunset_preset_name),
-            getString(R.string.lamp_preset_name),
-            getString(R.string.night_mode_preset_name),
-            getString(R.string.room_light_preset_name),
-            getString(R.string.sun_preset_name)
+            BlueLightPreset(getString(R.string.night_mode_preset_name), R.color.night_mode),
+            BlueLightPreset(getString(R.string.candle_preset_name), R.color.candle),
+            BlueLightPreset(getString(R.string.sunset_preset_name), R.color.sunset),
+            BlueLightPreset(getString(R.string.lamp_preset_name), R.color.lamp),
+            BlueLightPreset(getString(R.string.room_light_preset_name), R.color.room_light),
+            BlueLightPreset(getString(R.string.sun_preset_name), R.color.sun),
+            BlueLightPreset(getString(R.string.twilight_preset_name), R.color.twilight)
         )
         val adapter = PresetAdapter(presets) { preset ->
-            viewModel.setSelectedPreset(preset)
+            viewModel.setSelectedPreset(preset.name)
         }
         binding.presetsRecyclerview.adapter = adapter
     }

@@ -56,12 +56,12 @@
         </receiver>
 
         <receiver
-            android:name=".utils.AlarmReceiver"
+            android:name=".receivers.AlarmReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.nighteyecare.app.ACTION_START_FILTER" />
-                <action android:name="com.nighteyecare.app.ACTION_STOP_FILTER" />
+                <action android:name="com.nighteyecare.app.START_FILTER" />
+                <action android:name="com.nighteyecare.app.STOP_FILTER" />
             </intent-filter>
         </receiver>
 

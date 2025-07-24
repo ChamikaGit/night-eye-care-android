@@ -11,6 +11,7 @@ import com.nighteyecare.app.data.repository.FilterSettingsRepository
 import com.nighteyecare.app.utils.AlarmScheduler
 import com.nighteyecare.app.utils.FilterManager
 import kotlinx.coroutines.launch
+import androidx.core.content.ContextCompat
 
 class MainViewModel(application: Application, private val repository: FilterSettingsRepository, private val alarmScheduler: AlarmScheduler, private val filterManager: FilterManager) : AndroidViewModel(application) {
 
@@ -19,7 +20,7 @@ class MainViewModel(application: Application, private val repository: FilterSett
 
     init {
         viewModelScope.launch {
-            _filterSettings.value = repository.getFilterSettings() ?: FilterSettings(
+            val settings = repository.getFilterSettings() ?: FilterSettings(
                 isEnabled = false,
                 selectedPreset = "Night Mode",
                 intensity = 50,
@@ -28,6 +29,11 @@ class MainViewModel(application: Application, private val repository: FilterSett
                 scheduleStartTime = "22:00",
                 scheduleEndTime = "06:00"
             )
+            _filterSettings.value = settings
+            // Start the service only if it was previously enabled
+            if (settings.isEnabled) {
+                updateFilterService(settings)
+            }
         }
     }
 
@@ -105,13 +111,13 @@ class MainViewModel(application: Application, private val repository: FilterSett
         val (startHour, startMinute) = startTime.split(":").map { it.toInt() }
         val (endHour, endMinute) = endTime.split(":").map { it.toInt() }
 
-        alarmScheduler.scheduleFilter(startHour, startMinute, "com.nighteyecare.app.ACTION_START_FILTER")
-        alarmScheduler.scheduleFilter(endHour, endMinute, "com.nighteyecare.app.ACTION_STOP_FILTER")
+        alarmScheduler.scheduleFilter(startHour, startMinute, "com.nighteyecare.app.START_FILTER")
+        alarmScheduler.scheduleFilter(endHour, endMinute, "com.nighteyecare.app.STOP_FILTER")
     }
 
     private fun cancelAlarms() {
-        alarmScheduler.cancelFilter("com.nighteyecare.app.ACTION_START_FILTER")
-        alarmScheduler.cancelFilter("com.nighteyecare.app.ACTION_STOP_FILTER")
+        alarmScheduler.cancelFilter("com.nighteyecare.app.START_FILTER")
+        alarmScheduler.cancelFilter("com.nighteyecare.app.STOP_FILTER")
     }
 
     private fun updateAndSave(newSettings: FilterSettings) {
@@ -123,8 +129,7 @@ class MainViewModel(application: Application, private val repository: FilterSett
 
     private fun updateFilterService(settings: FilterSettings) {
         if (settings.isEnabled) {
-            val combinedAlpha = ((settings.intensity * 2.55) * (1 - (settings.dimLevel / 100.0))).toInt()
-            filterManager.startFilterService(getColorForPreset(settings.selectedPreset), combinedAlpha, settings.isEnabled)
+            filterManager.startFilterService(getColorForPreset(settings.selectedPreset), (settings.intensity * 2.55).toInt(), settings.dimLevel, settings.isEnabled)
         } else {
             filterManager.stopFilterService()
         }
@@ -132,37 +137,16 @@ class MainViewModel(application: Application, private val repository: FilterSett
 
     private fun getColorForPreset(preset: String): Int {
         return when (preset) {
-            getApplication<Application>().getString(R.string.candle_preset_name) -> kelvinToRgb(1800)
-            getApplication<Application>().getString(R.string.sunset_preset_name) -> kelvinToRgb(2000)
-            getApplication<Application>().getString(R.string.lamp_preset_name) -> kelvinToRgb(2700)
-            getApplication<Application>().getString(R.string.night_mode_preset_name) -> kelvinToRgb(3200)
-            getApplication<Application>().getString(R.string.room_light_preset_name) -> kelvinToRgb(3400)
-            getApplication<Application>().getString(R.string.sun_preset_name) -> kelvinToRgb(5000)
-            else -> kelvinToRgb(3200) // Default to Night Mode
+            getApplication<Application>().getString(R.string.candle_preset_name) -> ContextCompat.getColor(getApplication(), R.color.candle)
+            getApplication<Application>().getString(R.string.sunset_preset_name) -> ContextCompat.getColor(getApplication(), R.color.sunset)
+            getApplication<Application>().getString(R.string.lamp_preset_name) -> ContextCompat.getColor(getApplication(), R.color.lamp)
+            getApplication<Application>().getString(R.string.night_mode_preset_name) -> ContextCompat.getColor(getApplication(), R.color.night_mode)
+            getApplication<Application>().getString(R.string.room_light_preset_name) -> ContextCompat.getColor(getApplication(), R.color.room_light)
+            getApplication<Application>().getString(R.string.sun_preset_name) -> ContextCompat.getColor(getApplication(), R.color.sun)
+            getApplication<Application>().getString(R.string.twilight_preset_name) -> ContextCompat.getColor(getApplication(), R.color.twilight)
+            else -> ContextCompat.getColor(getApplication(), R.color.night_mode) // Default to Night Mode
         }
     }
 
-    private fun kelvinToRgb(kelvin: Int): Int {
-        val temp = kelvin / 100.0
-
-        var r: Double
-        var g: Double
-        var b: Double
-
-        if (temp < 66) {
-            r = 255.0
-            g = 99.4708025861 * Math.log(temp) - 161.1195681661
-            b = if (temp <= 19) {
-                0.0
-            } else {
-                50.5596851305 * Math.log(temp - 10) - 68.1120455596
-            }
-        } else {
-            r = 329.698727446 * Math.pow(temp - 60, -0.1332047592)
-            g = 288.1221695283 * Math.pow(temp - 60, -0.0755148492)
-            b = 255.0
-        }
-
-        return android.graphics.Color.rgb(r.coerceIn(0.0, 255.0).toInt(), g.coerceIn(0.0, 255.0).toInt(), b.coerceIn(0.0, 255.0).toInt())
-    }
+    
 }

@@ -61,7 +61,7 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_play_arrow"
-            android:tint="#38E078"
+            app:tint="#38E078"
             android:scaleType="fitCenter"
             android:contentDescription="Toggle Filter"/>
 
@@ -72,7 +72,7 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_stop"
-            android:tint="#38E078"
+            app:tint="#38E078"
             android:scaleType="fitCenter"
             android:contentDescription="Stop Service"/>
 
@@ -83,7 +83,7 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_open_in_new"
-            android:tint="#38E078"
+            app:tint="#38E078"
             android:scaleType="fitCenter"
             android:contentDescription="Open App"/>
 
