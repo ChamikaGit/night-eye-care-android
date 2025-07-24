@@ -25,12 +25,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import com.nighteyecare.app.data.database.AppDatabase
 
 class FilterService : Service() {
 
     private lateinit var windowManager: WindowManager
     private lateinit var overlayView: LinearLayout
     private lateinit var dimOverlayView: LinearLayout
+    private lateinit var appPreferencesManager: AppPreferencesManager
     private var currentFilterColor: Int = 0
     private var currentFilterAlpha: Int = 0
     
@@ -86,16 +88,37 @@ class FilterService : Service() {
         }
 
         createNotificationChannel()
+        this.appPreferencesManager = AppPreferencesManager(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        intent?.let {
-            currentFilterColor = it.getIntExtra("color", 0)
-            currentFilterAlpha = it.getIntExtra("alpha", 0)
-            val dimLevel = it.getIntExtra("dimLevel", 0)
-            val isActive = it.getBooleanExtra("isActive", false)
-            applyFilter(isActive, dimLevel)
-            updateNotification(isActive)
+        val action = intent?.action
+        Log.d("FilterService", "Received action: $action")
+
+        when (action) {
+            "ACTION_TOGGLE_FILTER" -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val currentSettings = AppDatabase.getDatabase(this@FilterService.applicationContext).filterSettingsDao().getFilterSettings() ?: return@launch
+                    val newIsActive = !currentSettings.isEnabled
+                    this@FilterService.appPreferencesManager.setFilterActive(newIsActive)
+                    applyFilter(newIsActive, currentSettings.dimLevel)
+                    updateNotification(newIsActive)
+                }
+            }
+            "ACTION_STOP_SERVICE" -> {
+                stopSelf()
+            }
+            else -> {
+                // Handle initial start or start with color/alpha/dimLevel
+                intent?.let {
+                    currentFilterColor = it.getIntExtra("color", 0)
+                    currentFilterAlpha = it.getIntExtra("alpha", 0)
+                    val dimLevel = it.getIntExtra("dimLevel", 0)
+                    val isActive = it.getBooleanExtra("isActive", false)
+                    applyFilter(isActive, dimLevel)
+                    updateNotification(isActive)
+                }
+            }
         }
         return START_STICKY
     }

@@ -12,7 +12,7 @@
     <color name="text_color">#FFFFFF</color>
     <color name="card_background">#1E2D24</color>
     <color name="secondary_text_color">#A0A0A0</color>
-    <color name="black_dim">#99000000</color>
+    <color name="black_dim">#B1000000</color>
 
     <color name="night_mode">#9923395d</color>
     <color name="candle">#99ffc85b</color>
